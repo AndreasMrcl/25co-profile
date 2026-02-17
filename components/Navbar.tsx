@@ -1,138 +1,70 @@
 "use client";
-
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { gsap } from "gsap";
 import { motion, AnimatePresence } from "framer-motion";
 
-const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Space", href: "#space" },
-  { label: "Coffee", href: "#coffee" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "Contact", href: "#contact" },
-];
+const F = { playfair: '"Playfair Display", Georgia, serif', dm: '"DM Sans", system-ui, sans-serif' };
+const navLinks = [{ label: "About", href: "#about" }, { label: "Space", href: "#space" }, { label: "Coffee", href: "#coffee" }, { label: "Gallery", href: "#gallery" }, { label: "Contact", href: "#contact" }];
 
 export default function Navbar() {
-  const navRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 80);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const fn = () => setScrolled(window.scrollY > 80);
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    setMenuOpen(false);
-    const target = document.querySelector(href);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
-    }
+  const scrollTo = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault(); setMenuOpen(false);
+    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <>
-      <motion.nav
-        ref={navRef}
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? "bg-[#FAF6EE]/95 backdrop-blur-md shadow-sm py-3"
-            : "bg-transparent py-5"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          {/* Logo */}
-          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
-            <Image
-              src="/images/logo25co.png"
-              alt="25co Logo"
-              width={52}
-              height={52}
-              className="object-contain"
-            />
-          </a>
+      <motion.nav initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.2 }}
+        style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: scrolled ? "12px 48px" : "20px 48px",
+          background: scrolled ? "rgba(250,246,238,0.95)" : "transparent",
+          backdropFilter: scrolled ? "blur(12px)" : "none",
+          boxShadow: scrolled ? "0 1px 30px rgba(0,0,0,0.06)" : "none",
+          transition: "all 0.4s ease" }}>
+        <a href="#" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+          <Image src="/images/logo25co.png" alt="25co" width={48} height={48} style={{ objectFit: "contain", display: "block" }} />
+        </a>
 
-          {/* Desktop Nav */}
-          <ul className="hidden md:flex items-center gap-10">
-            {navLinks.map((link) => (
-              <li key={link.label}>
-                <a
-                  href={link.href}
-                  onClick={(e) => handleNavClick(e, link.href)}
-                  className="relative text-sm font-sans tracking-widest uppercase text-[var(--charcoal)] hover:text-[var(--warm-brown)] transition-colors duration-300 group"
-                  style={{ letterSpacing: "0.15em", fontSize: "0.7rem" }}
-                >
-                  {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-px bg-[var(--warm-brown)] transition-all duration-300 group-hover:w-full" />
-                </a>
-              </li>
-            ))}
-          </ul>
+        <ul style={{ display: "flex", gap: "36px", listStyle: "none", margin: 0, padding: 0 }}>
+          {navLinks.map(link => (
+            <li key={link.label}>
+              <a href={link.href} onClick={e => scrollTo(e, link.href)} className="nav-link"
+                style={{ fontFamily: F.dm, color: "var(--charcoal)", fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", transition: "color 0.3s" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "var(--warm-brown)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "var(--charcoal)")}>
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
 
-          {/* CTA Button */}
-          <a
-            href="#contact"
-            onClick={(e) => handleNavClick(e, "#contact")}
-            className="hidden md:flex items-center gap-2 px-5 py-2.5 border border-[var(--warm-brown)] text-[var(--warm-brown)] text-xs tracking-widest uppercase font-sans hover:bg-[var(--warm-brown)] hover:text-white transition-all duration-300"
-            style={{ letterSpacing: "0.12em" }}
-          >
-            Book a Space
-          </a>
-
-          {/* Hamburger */}
-          <button
-            className="md:hidden flex flex-col gap-1.5 p-2"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
-          >
-            <span
-              className={`block w-6 h-px bg-[var(--charcoal)] transition-all duration-300 ${
-                menuOpen ? "rotate-45 translate-y-2.5" : ""
-              }`}
-            />
-            <span
-              className={`block w-6 h-px bg-[var(--charcoal)] transition-all duration-300 ${
-                menuOpen ? "opacity-0" : ""
-              }`}
-            />
-            <span
-              className={`block w-6 h-px bg-[var(--charcoal)] transition-all duration-300 ${
-                menuOpen ? "-rotate-45 -translate-y-2.5" : ""
-              }`}
-            />
-          </button>
-        </div>
+        <a href="#contact" onClick={e => scrollTo(e, "#contact")}
+          style={{ fontFamily: F.dm, padding: "10px 22px", border: "1px solid var(--warm-brown)", color: "var(--warm-brown)", fontSize: "0.65rem", letterSpacing: "0.15em", textTransform: "uppercase", textDecoration: "none", transition: "all 0.3s" }}
+          onMouseEnter={e => { e.currentTarget.style.background = "var(--warm-brown)"; e.currentTarget.style.color = "white"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--warm-brown)"; }}>
+          Book a Space
+        </a>
       </motion.nav>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-40 bg-[var(--warm-cream)] flex flex-col items-center justify-center gap-10"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            style={{ position: "fixed", inset: 0, zIndex: 40, background: "var(--warm-cream)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "32px" }}>
             {navLinks.map((link, i) => (
-              <motion.a
-                key={link.label}
-                href={link.href}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.08, duration: 0.4 }}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className="text-3xl font-serif text-[var(--charcoal)] hover:text-[var(--warm-brown)] transition-colors duration-300"
-                style={{ fontFamily: "var(--font-cormorant)" }}
-              >
+              <motion.a key={link.label} href={link.href} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08 }} onClick={e => scrollTo(e, link.href)}
+                style={{ fontFamily: F.playfair, fontSize: "clamp(2rem, 5vw, 2.8rem)", color: "var(--charcoal)", textDecoration: "none", transition: "color 0.3s" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "var(--warm-brown)")}
+                onMouseLeave={e => (e.currentTarget.style.color = "var(--charcoal)")}>
                 {link.label}
               </motion.a>
             ))}
