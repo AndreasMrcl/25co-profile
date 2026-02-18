@@ -217,7 +217,7 @@ export default function GallerySection() {
 
         <div style={{ textAlign: "center", marginTop: "48px" }}>
           <a
-            href="https://instagram.com/25co.space"
+            href="https://www.instagram.com/25.co__/"
             target="_blank"
             rel="noopener noreferrer"
             style={{

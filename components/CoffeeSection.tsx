@@ -15,19 +15,19 @@ const items = [
     name: "Espresso Signature",
     desc: "Single origin Arabica dari petani lokal, diseduh dengan teknik presisi.",
     price: "28K",
-    img: "/images/coffee1.jpg",
+    img: "/images/latte.jpg",
   },
   {
     name: "25 Latte",
     desc: "Espresso blend kami yang khas, dipadu susu segar dengan latte art.",
     price: "35K",
-    img: "/images/space1.jpg",
+    img: "/images/americano.jpg",
   },
   {
     name: "Cold Brew",
     desc: "Diseduh 18 jam, menghasilkan rasa kopi yang bold, smooth, dan refreshing.",
     price: "32K",
-    img: "/images/xmas1.jpg",
+    img: "/images/cold-brew.jpg",
   },
 ];
 
